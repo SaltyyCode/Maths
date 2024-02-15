@@ -1,0 +1,163 @@
+#!/usr/bin/env python3
+import math
+from math import *
+import sys
+
+if (len(sys.argv)==2) and sys.argv[1] == "-h":
+    print\
+("\
+USAGE\n\
+    ./102architect x y transfo1 arg11 [arg12] [transfo2 arg21 [arg22]] ...\n\n\
+DESCRIPTION\n\
+    x abscissa of the original point\n\
+    y ordinate of the original point\n\n\
+    transfo arg1 [arg2]\n\
+    -t i j  translation along vector (i, j)\n\
+    -z m n  scaling by factors m (x-axis) and n (y-axis)\n\
+    -r d    rotation centered in O by a d degree angle\n\
+    -s d    reflection over the axis passing through O with an inclination\n\
+            angle of d degrees\
+")
+    sys.exit(0)
+
+class spe_f(float):
+    def __repr__(self):
+        return "%0.2f" % self
+try:
+    x = sys.argv[1]
+    x = float(x)
+    y = sys.argv[2]
+    y = float(y)
+    base_x = x
+    base_y = y
+except:
+    print('ERROR', file=sys.stderr)
+    sys.exit(84) 
+
+i = 0
+while (1):
+    try:
+        sys.argv[i]
+        i += 1
+    except:
+        break
+
+def translation(c, x, y):
+    try:
+        sys.argv[c + 1]
+        sys.argv[c + 2]
+        i = sys.argv[c + 1]
+        i = float(i)
+        j = sys.argv[c + 2]
+        j = float(j)
+    except:
+        print('ERROR', file=sys.stderr)
+        sys.exit(84)
+    i = sys.argv[c + 1]
+    i = float(i)
+    j = sys.argv[c + 2]
+    j = float(j)
+    x += i
+    y += j
+
+    print(f"Translation along vector ({int (i)}, {int (j)})")
+    print(f"\
+{1:<8.2f}{0:<8.2f}{i:<.2f}\n\
+{0:<8.2f}{1:<8.2f}{j:<.2f}\n\
+{0:<8.2f}{0:<8.2f}{1:<.2f}\
+")
+    return x, y
+
+def scaling(c, x, y):
+    try:
+        sys.argv[c + 1]
+        sys.argv[c + 2]
+        m = sys.argv[c+1]
+        m = float(m)
+        n = sys.argv[c+2]
+        n = float(n)
+        x *= m
+        y *= n
+    except:
+        print('ERROR', file=sys.stderr)
+        sys.exit(84)
+    m = sys.argv[c+1]
+    m = float(m)
+    n = sys.argv[c+2]
+    n = float(n)
+    x *= m
+    y *= n
+
+    print(f"Scaling by factors {int (m)} and {int (n)}")
+    print(f"\
+{m:<8.2f}{0:<8.2f}{0:<.2f}\n\
+{0:<8.2f}{n:<8.2f}{0:<.2f}\n\
+{0:<8.2f}{0:<8.2f}{1:<.2f}\
+")
+    return x, y
+
+def rotation(c, x, y):
+    try:
+        sys.argv[c + 1]
+        teta = sys.argv[c+1]
+        teta = float(teta)
+    except:
+        print('ERROR', file=sys.stderr)
+        sys.exit(84)
+    teta = sys.argv[c+1]
+    teta = float(teta)
+    tmp_x = x
+    tmp_y = y
+    x = math.cos(math.radians(teta))*tmp_x - math.sin(math.radians(teta))*tmp_y
+    y = math.sin(math.radians(teta))*tmp_x + math.cos(math.radians(teta))*tmp_y
+
+    print(f"Rotation by a {int(teta)} degree angle")
+    print(f"\
+{math.cos(math.radians(teta)):<8.2f}{-math.sin(math.radians(teta)):<8.2f}{0:<.2f}\n\
+{math.sin(math.radians(teta)):<8.2f}{math.cos(math.radians(teta)):<8.2f}{0:<.2f}\n\
+{0:<8.2f}{0:<8.2f}{1:<.2f}\
+")
+    return x, y
+
+def reflection(c, x, y):
+    try:
+        sys.argv[c + 1]
+        teta = sys.argv[c+1]
+        teta = float(teta)
+    except:
+        print('ERROR', file=sys.stderr)
+        sys.exit(84)
+    teta = sys.argv[c+1]
+    teta = float(teta)
+    tmp_x = x
+    tmp_y = y
+    x = math.cos(math.radians(2*teta))*tmp_x + math.sin(math.radians(2*teta))*tmp_y
+    y = math.sin(math.radians(2*teta))*tmp_x - math.cos(math.radians(2*teta))*tmp_y
+
+    print(f"Reflection over an axis with an inclination angle of {int(teta)} degrees")
+    print(f"\
+{math.cos(math.radians(2*teta)):<8.2f}{math.sin(math.radians(2*teta)):<8.2f}{0:<.2f}\n\
+{math.sin(math.radians(2*teta)):<8.2f}{-math.cos(math.radians(2*teta)):<8.2f}{0:<.2f}\n\
+{0:<8.2f}{0:<8.2f}{1:<.2f}\
+")
+    return x, y
+
+c = 3
+while (c != i):
+    if sys.argv[c] == "-t":
+        x, y = translation(c, x, y)
+        c += 2
+    elif sys.argv[c] == "-z":
+        x, y = scaling(c, x, y)
+        c += 2
+    elif sys.argv[c] == "-r":
+        x, y = rotation(c, x, y)
+        c += 1
+    elif sys.argv[c] == "-s":
+        x, y = reflection(c, x, y)
+        c += 1
+    else:
+        print('ERROR', file=sys.stderr)
+        sys.exit(84)
+    c += 1
+print(f"({spe_f (base_x)}, {spe_f (base_y)}) => ({spe_f (x)}, {spe_f (y)})")
