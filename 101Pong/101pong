@@ -1,0 +1,102 @@
+#!/usr/bin/env python3
+import math
+from math import *
+import sys
+
+if (len(sys.argv) == 2) and sys.argv[1] == "-h":
+    print\
+("\
+USAGE\n\
+    ./101pong x0 y0 z0 x1 y1 z1 n\n\n\
+DESCRIPTION\n\
+    x0 ball abscissa at time t - 1\n\
+    y0 ball ordinate at time t - 1\n\
+    z0 ball altitude at time t - 1\n\
+    x1 ball abscissa at time t\n\
+    y1 ball ordinate at time t\n\
+    z1 ball altitude at time t\n\
+    n time shift (greater than or equal to zero, integer)\
+")
+    sys.exit(0)
+
+class roundup(float):
+     def __repr__(self):
+        return "%0.2f" % self
+
+if not len(sys.argv) == 8:
+    print('ERROR', file = sys.stderr)
+    sys.exit(84)
+
+
+try:
+    x0 = sys.argv[1]
+    x0 = float (x0)
+    y0 = sys.argv[2]
+    y0 = float (y0)
+    z0 = sys.argv[3]
+    z0 = float (z0)
+    
+    x1 = sys.argv[4]
+    x1 = float (x1)
+    y1 = sys.argv[5]
+    y1 = float (y1)
+    z1 = sys.argv[6]
+    z1 = float (z1)
+    
+    n = sys.argv[7]
+    n = int (n)
+    
+    x2 = x1 - x0
+    y2 = y1 - y0
+    z2 = z1 - z0
+    test1 = n * x2 + x1
+    test2 = n * y2 + y1
+    test3 = n * z2 + z1
+    
+except:
+    print('ERROR', file = sys.stderr)
+    sys.exit(84)
+    
+if n < 0:
+    print('ERROR', file = sys.stderr)
+    sys.exit(84)
+
+def vel (x0, y0, z0, x1, y1, z1):
+    x2 = x1 - x0
+    y2 = y1 - y0
+    z2 = z1 - z0
+    print(f"The velocity vector of the ball is:\n({roundup(x2)}, {roundup(y2)}, {roundup(z2)})")
+    
+def vel_n (x0, y0, z0, x1, y1, z1, n):
+    x2 = x1 - x0
+    y2 = y1 - y0
+    z2 = z1 - z0
+    xn = n * x2 + x1
+    yn = n * y2 + y1
+    zn = n * z2 + z1
+    print(f"At time t + {n}, ball coordinates will be:\n({roundup(xn)}, {roundup(yn)}, {roundup(zn)})")
+    
+def paddle (x0, y0, z0, x1, y1, z1, n):
+    x2 = x1 - x0
+    y2 = y1 - y0
+    z2 = z1 - z0
+    zn = n * z2 + z1
+    d = 0
+    d = float(d)
+    try:
+        90 - (acos(abs(z2)/sqrt(pow(x2, 2) + pow(y2, 2) + pow(z2, 2))))*180/math.pi
+    except:
+        print('ERROR caca', file=sys.stderr)
+        sys.exit(84)
+        
+    if (z1 <= 0 and zn >= 0) or (z1 >= 0 and zn <= 0) or (z1 == 0 and zn == 0):
+        d = 90 - (acos(abs(z2)/sqrt(pow(x2, 2) + pow(y2, 2) + pow(z2, 2))))*180/math.pi
+        print(f"The incidence angle is:\n{roundup(d)} degrees")
+        sys.exit(0)
+    else:
+        print(f"The ball won't reach the paddle.")
+        sys.exit(0)
+
+vel(x0, y0, z0, x1, y1, z1)
+vel_n(x0, y0, z0, x1, y1, z1, n)
+paddle(x0, y0, z0, x1, y1, z1, n)
